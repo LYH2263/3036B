@@ -73,11 +73,13 @@ export interface StatsOverviewDto {
   dictationAccuracy: number;
   speakingAttempts: number;
   speakingAverageScore: number;
+  clozeAttempts: number;
+  clozeAccuracy: number;
   streakDays: number;
   achievements: AchievementDto[];
 }
 
-export type OfflineQueueEvent = WordReviewEvent | GrammarAttemptEvent | DictationAttemptEvent | SpeakingAttemptEvent;
+export type OfflineQueueEvent = WordReviewEvent | GrammarAttemptEvent | DictationAttemptEvent | SpeakingAttemptEvent | ClozeAttemptEvent;
 
 export interface WordReviewEvent {
   type: 'WORD_REVIEW';
@@ -217,6 +219,57 @@ export interface SpeakingBestScoreDto {
   bestScore: number;
   totalAttempts: number;
   averageScore: number;
+}
+
+export interface ClozeItemDto {
+  id: string;
+  wordEntryId: string;
+  targetWord: string;
+  definition: string;
+  sentenceWithBlank: string;
+  fullSentence: string;
+  blankIndex: number;
+}
+
+export interface ClozeAttemptResultDto {
+  deduplicated: boolean;
+  id: string;
+  wordEntryId: string;
+  targetWord: string;
+  sentence: string;
+  userAnswer: string;
+  correct: boolean;
+  usedHint: boolean;
+  skipped: boolean;
+  totalQuestions: number;
+  correctCount: number;
+  accuracy: number;
+  createdAt: string;
+}
+
+export interface ClozeAttemptEvent {
+  type: 'CLOZE_ATTEMPT';
+  clientEventId: string;
+  payload: {
+    wordEntryId: string;
+    targetWord: string;
+    sentence: string;
+    userAnswer: string;
+    correct: boolean;
+    usedHint: boolean;
+    skipped: boolean;
+    totalQuestions: number;
+    correctCount: number;
+    accuracy: number;
+  };
+  createdAt: string;
+}
+
+export interface ClozeStatsDto {
+  totalAttempts: number;
+  totalQuestions: number;
+  correctCount: number;
+  accuracy: number;
 }
 
 export interface ImportCandidateWord {

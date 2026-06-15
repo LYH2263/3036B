@@ -12,7 +12,7 @@ export class StatsService {
     todayStart.setHours(0, 0, 0, 0);
     const tomorrowStart = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
 
-    const [todayReviewCount, todayNewWords, vocabularyTotal, totalReviews, grammarStats, dictationStats, speakingStats] =
+    const [todayReviewCount, todayNewWords, vocabularyTotal, totalReviews, grammarStats, dictationStats, speakingStats, clozeStats] =
       await Promise.all([
         this.prisma.userWordReviewEvent.count({
           where: {
@@ -76,6 +76,19 @@ export class StatsService {
           _avg: {
             similarityScore: true
           }
+        }),
+        this.prisma.clozeAttempt.aggregate({
+          where: {
+            userId,
+            skipped: false
+          },
+          _count: {
+            id: true
+          },
+          _sum: {
+            totalQuestions: true,
+            correctCount: true
+          }
         })
       ]);
 
@@ -95,6 +108,14 @@ export class StatsService {
 
     const speakingAttempts = speakingStats._count.id;
     const speakingAverageScore = Number((speakingStats._avg.similarityScore ?? 0).toFixed(2));
+
+    const clozeAttempts = clozeStats._count.id;
+    const clozeTotalQuestions = clozeStats._sum.totalQuestions ?? 0;
+    const clozeCorrectCount = clozeStats._sum.correctCount ?? 0;
+    const clozeAccuracy =
+      clozeTotalQuestions > 0
+        ? Number(((clozeCorrectCount / clozeTotalQuestions) * 100).toFixed(2))
+        : 0;
 
     const streakDays = await this.computeStreakDays(userId, todayStart);
 
@@ -122,6 +143,12 @@ export class StatsService {
         title: '口语练习 10 次',
         description: '累计完成 10 次口语跟读练习',
         unlocked: speakingAttempts >= 10
+      },
+      {
+        code: 'CLOZE_10',
+        title: '填空练习 10 次',
+        description: '累计完成 10 次例句填空练习',
+        unlocked: clozeAttempts >= 10
       }
     ]
       .filter((item) => item.unlocked)
@@ -138,13 +165,15 @@ export class StatsService {
       dictationAccuracy,
       speakingAttempts,
       speakingAverageScore,
+      clozeAttempts,
+      clozeAccuracy,
       streakDays,
       achievements
     };
   }
 
   private async computeStreakDays(userId: string, todayStart: Date): Promise<number> {
-    const [reviewEvents, attempts, addedWords, dictationAttempts, speakingAttempts] = await Promise.all([
+    const [reviewEvents, attempts, addedWords, dictationAttempts, speakingAttempts, clozeAttempts] = await Promise.all([
       this.prisma.userWordReviewEvent.findMany({
         where: { userId },
         select: { reviewedAt: true },
@@ -174,6 +203,12 @@ export class StatsService {
         select: { createdAt: true },
         orderBy: { createdAt: 'desc' },
         take: 90
+      }),
+      this.prisma.clozeAttempt.findMany({
+        where: { userId },
+        select: { createdAt: true },
+        orderBy: { createdAt: 'desc' },
+        take: 90
       })
     ]);
 
@@ -189,6 +224,7 @@ export class StatsService {
     addedWords.forEach((item) => daySet.add(toDayKey(item.createdAt)));
     dictationAttempts.forEach((item) => daySet.add(toDayKey(item.createdAt)));
     speakingAttempts.forEach((item) => daySet.add(toDayKey(item.createdAt)));
+    clozeAttempts.forEach((item) => daySet.add(toDayKey(item.createdAt)));
 
     let streak = 0;
     let cursor = new Date(todayStart);

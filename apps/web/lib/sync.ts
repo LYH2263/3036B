@@ -56,6 +56,25 @@ export async function syncOfflineQueue(): Promise<{ synced: number; failed: numb
         });
       }
 
+      if (row.event.type === 'CLOZE_ATTEMPT') {
+        await apiRequest('/cloze/attempts', {
+          method: 'POST',
+          body: JSON.stringify({
+            wordEntryId: row.event.payload.wordEntryId,
+            targetWord: row.event.payload.targetWord,
+            sentence: row.event.payload.sentence,
+            userAnswer: row.event.payload.userAnswer,
+            correct: row.event.payload.correct,
+            usedHint: row.event.payload.usedHint,
+            skipped: row.event.payload.skipped,
+            totalQuestions: row.event.payload.totalQuestions,
+            correctCount: row.event.payload.correctCount,
+            accuracy: row.event.payload.accuracy,
+            clientEventId: row.event.clientEventId
+          })
+        });
+      }
+
       await removeOfflineEvent(row.id);
       synced += 1;
     } catch (_error) {

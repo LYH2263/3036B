@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   LogOut,
   Mic,
+  PenLine,
   Puzzle,
   Sparkles
 } from 'lucide-react';
@@ -26,6 +27,7 @@ const navItems = [
   { href: '/import', label: '导入', icon: Import },
   { href: '/dictation', label: '听写', icon: Ear },
   { href: '/speaking', label: '跟读', icon: Mic },
+  { href: '/cloze', label: '填空', icon: PenLine },
   { href: '/grammar', label: '语法', icon: FileText },
   { href: '/games/match', label: '配对', icon: Gamepad2 },
   { href: '/progress', label: '进度', icon: BarChart3 }
