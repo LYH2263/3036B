@@ -162,3 +162,30 @@ export interface MatchGameBestScoreDto {
   totalGames: number;
   totalWins: number;
 }
+
+export interface ImportCandidateWord {
+  wordEntryId: string;
+  word: string;
+  phonetic: string;
+  definition: string;
+  frequency: number;
+}
+
+export interface ImportParseResultDto {
+  candidates: ImportCandidateWord[];
+  totalExtracted: number;
+  stopwordsFiltered: number;
+  masteredFiltered: number;
+  notInDictionary: string[];
+}
+
+export interface BatchAddResultDto {
+  added: number;
+  alreadyExists: number;
+  notFound: number;
+  details: Array<{
+    wordEntryId: string;
+    word: string;
+    status: 'added' | 'already_exists' | 'not_found';
+  }>;
+}

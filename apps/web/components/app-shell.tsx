@@ -8,6 +8,7 @@ import {
   Ear,
   FileText,
   Gamepad2,
+  Import,
   LayoutDashboard,
   LogOut,
   Sparkles
@@ -19,6 +20,7 @@ import { useAuthStore } from '../store/auth-store';
 const navItems = [
   { href: '/dashboard', label: '面板', icon: LayoutDashboard },
   { href: '/vocabulary', label: '词汇', icon: BookOpen },
+  { href: '/import', label: '导入', icon: Import },
   { href: '/dictation', label: '听写', icon: Ear },
   { href: '/grammar', label: '语法', icon: FileText },
   { href: '/games/match', label: '配对', icon: Gamepad2 },
