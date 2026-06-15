@@ -31,6 +31,7 @@ model User {
   wordProgresses     UserWordProgress[]
   grammarAttempts    GrammarAttempt[]
   wordReviewEvents   UserWordReviewEvent[]
+  dictationAttempts  DictationAttempt[]
 
   @@map("users")
 }
@@ -133,4 +134,21 @@ model GrammarAttempt {
   @@unique([userId, clientEventId])
   @@index([userId, createdAt])
   @@map("grammar_attempts")
+}
+
+model DictationAttempt {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  clientEventId  String   @map("client_event_id")
+  totalWords     Int      @map("total_words")
+  correctCount   Int      @map("correct_count")
+  accuracy       Float
+  wordResults    Json     @map("word_results")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientEventId])
+  @@index([userId, createdAt])
+  @@map("dictation_attempts")
 }

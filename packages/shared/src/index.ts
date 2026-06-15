@@ -69,11 +69,13 @@ export interface StatsOverviewDto {
   totalReviews: number;
   grammarAttempts: number;
   grammarCorrectRate: number;
+  dictationAttempts: number;
+  dictationAccuracy: number;
   streakDays: number;
   achievements: AchievementDto[];
 }
 
-export type OfflineQueueEvent = WordReviewEvent | GrammarAttemptEvent;
+export type OfflineQueueEvent = WordReviewEvent | GrammarAttemptEvent | DictationAttemptEvent;
 
 export interface WordReviewEvent {
   type: 'WORD_REVIEW';
@@ -91,6 +93,46 @@ export interface GrammarAttemptEvent {
   payload: {
     lessonId: string;
     answers: Array<{ questionId: string; answer: string }>;
+  };
+  createdAt: string;
+}
+
+export interface DictationWordDto {
+  id: string;
+  word: string;
+  definition: string;
+  exampleSentence: string;
+  phonetic: string;
+}
+
+export interface DictationWordResult {
+  wordEntryId: string;
+  userInput: string;
+  correctWord: string;
+  exampleSentence?: string;
+  correct: boolean;
+}
+
+export interface DictationAttemptResultDto {
+  deduplicated: boolean;
+  id: string;
+  totalWords: number;
+  correctCount: number;
+  accuracy: number;
+  createdAt: string;
+}
+
+export interface DictationAttemptEvent {
+  type: 'DICTATION_ATTEMPT';
+  clientEventId: string;
+  payload: {
+    wordResults: Array<{
+      wordEntryId: string;
+      userInput: string;
+      correctWord: string;
+      exampleSentence?: string;
+      correct: boolean;
+    }>;
   };
   createdAt: string;
 }

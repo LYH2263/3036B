@@ -12,7 +12,7 @@ export class StatsService {
     todayStart.setHours(0, 0, 0, 0);
     const tomorrowStart = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
 
-    const [todayReviewCount, todayNewWords, vocabularyTotal, totalReviews, grammarStats] =
+    const [todayReviewCount, todayNewWords, vocabularyTotal, totalReviews, grammarStats, dictationStats] =
       await Promise.all([
         this.prisma.userWordReviewEvent.count({
           where: {
@@ -53,6 +53,18 @@ export class StatsService {
             correctCount: true,
             totalQuestions: true
           }
+        }),
+        this.prisma.dictationAttempt.aggregate({
+          where: {
+            userId
+          },
+          _count: {
+            id: true
+          },
+          _sum: {
+            correctCount: true,
+            totalWords: true
+          }
         })
       ]);
 
@@ -61,6 +73,14 @@ export class StatsService {
     const totalQuestions = grammarStats._sum.totalQuestions ?? 0;
     const grammarCorrectRate =
       totalQuestions > 0 ? Number(((totalCorrect / totalQuestions) * 100).toFixed(2)) : 0;
+
+    const dictationAttempts = dictationStats._count.id;
+    const dictationCorrectCount = dictationStats._sum.correctCount ?? 0;
+    const dictationTotalWords = dictationStats._sum.totalWords ?? 0;
+    const dictationAccuracy =
+      dictationTotalWords > 0
+        ? Number(((dictationCorrectCount / dictationTotalWords) * 100).toFixed(2))
+        : 0;
 
     const streakDays = await this.computeStreakDays(userId, todayStart);
 
@@ -94,13 +114,15 @@ export class StatsService {
       totalReviews,
       grammarAttempts,
       grammarCorrectRate,
+      dictationAttempts,
+      dictationAccuracy,
       streakDays,
       achievements
     };
   }
 
   private async computeStreakDays(userId: string, todayStart: Date): Promise<number> {
-    const [reviewEvents, attempts, addedWords] = await Promise.all([
+    const [reviewEvents, attempts, addedWords, dictationAttempts] = await Promise.all([
       this.prisma.userWordReviewEvent.findMany({
         where: { userId },
         select: { reviewedAt: true },
@@ -118,6 +140,12 @@ export class StatsService {
         select: { createdAt: true },
         orderBy: { createdAt: 'desc' },
         take: 90
+      }),
+      this.prisma.dictationAttempt.findMany({
+        where: { userId },
+        select: { createdAt: true },
+        orderBy: { createdAt: 'desc' },
+        take: 90
       })
     ]);
 
@@ -131,6 +159,7 @@ export class StatsService {
     reviewEvents.forEach((item) => daySet.add(toDayKey(item.reviewedAt)));
     attempts.forEach((item) => daySet.add(toDayKey(item.createdAt)));
     addedWords.forEach((item) => daySet.add(toDayKey(item.createdAt)));
+    dictationAttempts.forEach((item) => daySet.add(toDayKey(item.createdAt)));
 
     let streak = 0;
     let cursor = new Date(todayStart);

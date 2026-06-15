@@ -29,6 +29,16 @@ export async function syncOfflineQueue(): Promise<{ synced: number; failed: numb
         });
       }
 
+      if (row.event.type === 'DICTATION_ATTEMPT') {
+        await apiRequest('/dictation/attempts', {
+          method: 'POST',
+          body: JSON.stringify({
+            wordResults: row.event.payload.wordResults,
+            clientEventId: row.event.clientEventId
+          })
+        });
+      }
+
       await removeOfflineEvent(row.id);
       synced += 1;
     } catch (_error) {

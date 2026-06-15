@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   BarChart3,
   BookOpen,
+  Ear,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -17,6 +18,7 @@ import { useAuthStore } from '../store/auth-store';
 const navItems = [
   { href: '/dashboard', label: '面板', icon: LayoutDashboard },
   { href: '/vocabulary', label: '词汇', icon: BookOpen },
+  { href: '/dictation', label: '听写', icon: Ear },
   { href: '/grammar', label: '语法', icon: FileText },
   { href: '/progress', label: '进度', icon: BarChart3 }
 ];

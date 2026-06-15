@@ -4,6 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { AuthModule } from './auth/auth.module';
+import { DictationModule } from './dictation/dictation.module';
 import { GrammarModule } from './grammar/grammar.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { StatsModule } from './stats/stats.module';
@@ -26,6 +27,7 @@ import { WordsModule } from './words/words.module';
     WordsModule,
     UserWordsModule,
     GrammarModule,
+    DictationModule,
     StatsModule
   ],
   providers: [
