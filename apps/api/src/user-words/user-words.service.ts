@@ -193,7 +193,8 @@ export class UserWordsService {
         word: item.wordEntry.word,
         definition: item.wordEntry.definition,
         exampleSentence: item.wordEntry.exampleSentence,
-        phonetic: item.wordEntry.phonetic
+        phonetic: item.wordEntry.phonetic,
+        etymology: item.wordEntry.etymology
       }
     };
   }

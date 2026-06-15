@@ -82,6 +82,7 @@ export class RootsService {
         definition: rel.wordEntry.definition,
         exampleSentence: rel.wordEntry.exampleSentence,
         phonetic: rel.wordEntry.phonetic,
+        etymology: rel.wordEntry.etymology,
         position: rel.position
       }))
     };

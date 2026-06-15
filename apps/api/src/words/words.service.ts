@@ -43,7 +43,8 @@ export class WordsService {
       word: item.word,
       definition: item.definition,
       exampleSentence: item.exampleSentence,
-      phonetic: item.phonetic
+      phonetic: item.phonetic,
+      etymology: item.etymology
     }));
   }
 }

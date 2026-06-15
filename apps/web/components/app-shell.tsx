@@ -11,6 +11,7 @@ import {
   Gamepad2,
   Import,
   LayoutDashboard,
+  Lightbulb,
   LogOut,
   Mic,
   PenLine,
@@ -23,6 +24,7 @@ import { useAuthStore } from '../store/auth-store';
 
 const navItems = [
   { href: '/dashboard', label: '面板', icon: LayoutDashboard },
+  { href: '/daily', label: '每日', icon: Lightbulb },
   { href: '/vocabulary', label: '词汇', icon: BookOpen },
   { href: '/roots', label: '词根', icon: Puzzle },
   { href: '/import', label: '导入', icon: Import },

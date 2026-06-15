@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-type SeedWord = readonly [string, string, string, string];
+type SeedWord = readonly [string, string, string, string, string];
 
 const TARGET_WORDS_COUNT = 9300;
 const WORD_LIST_FILE = 'google-10000-english-no-swears.txt';
@@ -198,7 +198,8 @@ function buildExtendedWords(
       word,
       dictionaryEntry.definition,
       `I am learning the word "${word}" in lexigram.`,
-      dictionaryEntry.phonetic
+      dictionaryEntry.phonetic,
+      generateEtymology(word)
     ] as const);
   }
 
@@ -209,6 +210,110 @@ function buildExtendedWords(
   }
 
   return generated;
+}
+
+function generateEtymology(word: string): string {
+  const firstLetter = word.charAt(0).toUpperCase();
+  const length = word.length;
+
+  const suffixInfo = getSuffixInfo(word);
+  const prefixInfo = getPrefixInfo(word);
+
+  const tidbits: string[] = [];
+
+  if (prefixInfo) {
+    tidbits.push(`前缀 "${prefixInfo.prefix}" 表示${prefixInfo.meaning}`);
+  }
+  if (suffixInfo) {
+    tidbits.push(`后缀 "${suffixInfo.suffix}" 常用于${suffixInfo.meaning}`);
+  }
+
+  if (tidbits.length === 0) {
+    tidbits.push(`这是一个以 ${firstLetter} 开头的 ${length} 字母单词`);
+  }
+
+  return tidbits.join('；') + '。';
+}
+
+function getPrefixInfo(word: string): { prefix: string; meaning: string } | null {
+  const prefixes = [
+    { prefix: 'un', meaning: '"不、相反"' },
+    { prefix: 're', meaning: '"再、重新"' },
+    { prefix: 'pre', meaning: '"在…之前"' },
+    { prefix: 'dis', meaning: '"不、相反"' },
+    { prefix: 'mis', meaning: '"错误、坏"' },
+    { prefix: 'in', meaning: '"不、在内"' },
+    { prefix: 'im', meaning: '"不、在内"' },
+    { prefix: 'ex', meaning: '"出、外"' },
+    { prefix: 'en', meaning: '"使成为"' },
+    { prefix: 'sub', meaning: '"在…下面"' },
+    { prefix: 'super', meaning: '"超级、在…之上"' },
+    { prefix: 'inter', meaning: '"在…之间"' },
+    { prefix: 'trans', meaning: '"跨越、转变"' },
+    { prefix: 'com', meaning: '"共同、一起"' },
+    { prefix: 'con', meaning: '"共同、一起"' },
+    { prefix: 'de', meaning: '"向下、去除"' },
+    { prefix: 'pro', meaning: '"向前、支持"' },
+    { prefix: 'anti', meaning: '"反对、对抗"' },
+    { prefix: 'auto', meaning: '"自己、自动"' },
+    { prefix: 'bi', meaning: '"二、双"' },
+    { prefix: 'tri', meaning: '"三"' },
+    { prefix: 'multi', meaning: '"多"' },
+    { prefix: 'over', meaning: '"过度、在…之上"' },
+    { prefix: 'under', meaning: '"在…下面、不足"' },
+    { prefix: 'out', meaning: '"外、超过"' },
+    { prefix: 'over', meaning: '"过度、超过"' }
+  ];
+
+  for (const item of prefixes) {
+    if (word.startsWith(item.prefix) && word.length > item.prefix.length + 2) {
+      return item;
+    }
+  }
+
+  return null;
+}
+
+function getSuffixInfo(word: string): { suffix: string; meaning: string } | null {
+  const suffixes = [
+    { suffix: 'tion', meaning: '名词，表示"行为、状态"' },
+    { suffix: 'sion', meaning: '名词，表示"行为、状态"' },
+    { suffix: 'ness', meaning: '名词，表示"性质、状态"' },
+    { suffix: 'ment', meaning: '名词，表示"行为、结果"' },
+    { suffix: 'able', meaning: '形容词，表示"能够…的"' },
+    { suffix: 'ible', meaning: '形容词，表示"能够…的"' },
+    { suffix: 'ful', meaning: '形容词，表示"充满…的"' },
+    { suffix: 'less', meaning: '形容词，表示"没有…的"' },
+    { suffix: 'ous', meaning: '形容词，表示"具有…性质的"' },
+    { suffix: 'ive', meaning: '形容词，表示"有…倾向的"' },
+    { suffix: 'al', meaning: '形容词，表示"与…有关的"' },
+    { suffix: 'ly', meaning: '副词，表示"以…方式"' },
+    { suffix: 'er', meaning: '名词，表示"做…的人/物"' },
+    { suffix: 'or', meaning: '名词，表示"做…的人/物"' },
+    { suffix: 'ist', meaning: '名词，表示"从事…的人"' },
+    { suffix: 'ism', meaning: '名词，表示"主义、学说"' },
+    { suffix: 'ity', meaning: '名词，表示"性质、状态"' },
+    { suffix: 'ty', meaning: '名词，表示"性质、状态"' },
+    { suffix: 'ize', meaning: '动词，表示"使成为"' },
+    { suffix: 'ify', meaning: '动词，表示"使成为"' },
+    { suffix: 'en', meaning: '动词，表示"使变成"' },
+    { suffix: 'ate', meaning: '动词，表示"使…"' },
+    { suffix: 'ing', meaning: '动名词/现在分词' },
+    { suffix: 'ed', meaning: '过去式/过去分词' },
+    { suffix: 'ly', meaning: '副词后缀' },
+    { suffix: 'ward', meaning: '副词，表示"朝向"' },
+    { suffix: 'dom', meaning: '名词，表示"领域、状态"' },
+    { suffix: 'ship', meaning: '名词，表示"状态、关系"' },
+    { suffix: 'hood', meaning: '名词，表示"状态、身份"' }
+  ];
+
+  for (const item of suffixes) {
+    if (word.endsWith(item.suffix) && word.length > item.suffix.length + 2) {
+      return item;
+    }
+  }
+
+  return null;
 }
 
 function assertChineseDefinitionCoverage(allWords: readonly SeedWord[]) {
@@ -222,7 +327,14 @@ function assertChineseDefinitionCoverage(allWords: readonly SeedWord[]) {
 }
 
 const wordDictionary = loadWordDictionary();
-const words = [...coreWords, ...buildExtendedWords(coreWords, wordDictionary)];
+const coreWordsWithEtymology = coreWords.map(([word, definition, exampleSentence, phonetic]) => [
+  word,
+  definition,
+  exampleSentence,
+  phonetic,
+  generateEtymology(word)
+] as const) as SeedWord[];
+const words = [...coreWordsWithEtymology, ...buildExtendedWords(coreWordsWithEtymology, wordDictionary)];
 assertChineseDefinitionCoverage(words);
 
 const lessons = [
@@ -663,11 +775,11 @@ async function main() {
   });
 
   const savedWordEntries: Map<string, string> = new Map();
-  for (const [word, definition, exampleSentence, phonetic] of words) {
+  for (const [word, definition, exampleSentence, phonetic, etymology] of words) {
     const saved = await prisma.wordEntry.upsert({
       where: { word },
-      create: { word, definition, exampleSentence, phonetic },
-      update: { definition, exampleSentence, phonetic }
+      create: { word, definition, exampleSentence, phonetic, etymology },
+      update: { definition, exampleSentence, phonetic, etymology }
     });
     savedWordEntries.set(word.toLowerCase(), saved.id);
   }

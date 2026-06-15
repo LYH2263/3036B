@@ -17,6 +17,7 @@ export interface WordEntryDto {
   definition: string;
   exampleSentence: string;
   phonetic: string;
+  etymology: string;
 }
 
 export interface UserWordProgressDto {
@@ -317,4 +318,16 @@ export interface DerivedWordDto extends WordEntryDto {
 
 export interface WordRootDetailDto extends WordRootDto {
   derivedWords: DerivedWordDto[];
+}
+
+export interface DailyWordDto {
+  id: string;
+  date: string;
+  learned: boolean;
+  word: WordEntryDto;
+}
+
+export interface DailyWordHistoryDto {
+  items: DailyWordDto[];
+  total: number;
 }

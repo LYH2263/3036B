@@ -4,6 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { AuthModule } from './auth/auth.module';
+import { DailyWordModule } from './daily-word/daily-word.module';
 import { DictationModule } from './dictation/dictation.module';
 import { FocusModule } from './focus/focus.module';
 import { GrammarModule } from './grammar/grammar.module';
@@ -40,7 +41,8 @@ import { WordsModule } from './words/words.module';
     SpeakingModule,
     ClozeModule,
     FocusModule,
-    StatsModule
+    StatsModule,
+    DailyWordModule
   ],
   providers: [
     {

@@ -42,6 +42,7 @@ model User {
   speakingAttempts   SpeakingAttempt[]
   clozeAttempts      ClozeAttempt[]
   focusSessions      FocusSession[]
+  dailyWords         DailyWord[]
 
   @@map("users")
 }
@@ -52,8 +53,10 @@ model WordEntry {
   definition      String
   exampleSentence String             @map("example_sentence")
   phonetic        String             @default("")
+  etymology       String             @default("")
   createdAt       DateTime           @default(now()) @map("created_at")
   progresses      UserWordProgress[]
+  dailyWords      DailyWord[]
 
   @@index([word])
   @@map("word_entries")
@@ -286,4 +289,20 @@ model FocusSession {
   @@unique([userId, clientEventId])
   @@index([userId, startedAt])
   @@map("focus_sessions")
+}
+
+model DailyWord {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  wordEntryId String    @map("word_entry_id")
+  date        DateTime  @map("date")
+  learned     Boolean   @default(false) @map("learned")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wordEntry   WordEntry @relation(fields: [wordEntryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@map("daily_words")
 }
