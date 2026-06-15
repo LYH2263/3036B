@@ -71,11 +71,13 @@ export interface StatsOverviewDto {
   grammarCorrectRate: number;
   dictationAttempts: number;
   dictationAccuracy: number;
+  speakingAttempts: number;
+  speakingAverageScore: number;
   streakDays: number;
   achievements: AchievementDto[];
 }
 
-export type OfflineQueueEvent = WordReviewEvent | GrammarAttemptEvent | DictationAttemptEvent;
+export type OfflineQueueEvent = WordReviewEvent | GrammarAttemptEvent | DictationAttemptEvent | SpeakingAttemptEvent;
 
 export interface WordReviewEvent {
   type: 'WORD_REVIEW';
@@ -161,6 +163,60 @@ export interface MatchGameBestScoreDto {
   bestCombo: number;
   totalGames: number;
   totalWins: number;
+}
+
+export type SpeakingPracticeMode = 'word' | 'sentence';
+
+export interface SpeakingWordDto {
+  id: string;
+  wordEntryId: string;
+  text: string;
+  definition: string;
+  phonetic: string;
+  mode: SpeakingPracticeMode;
+}
+
+export interface SpeakingWordResult {
+  word: string;
+  recognized: string;
+  matchType: 'correct' | 'wrong' | 'missing' | 'extra';
+  similarity: number;
+}
+
+export interface SpeakingAttemptResultDto {
+  deduplicated: boolean;
+  id: string;
+  targetText: string;
+  recognizedText: string;
+  similarityScore: number;
+  totalWords: number;
+  correctCount: number;
+  wordResults: SpeakingWordResult[];
+  practiceMode: SpeakingPracticeMode;
+  createdAt: string;
+}
+
+export interface SpeakingAttemptEvent {
+  type: 'SPEAKING_ATTEMPT';
+  clientEventId: string;
+  payload: {
+    wordEntryId?: string;
+    targetText: string;
+    recognizedText: string;
+    similarityScore: number;
+    wordResults: SpeakingWordResult[];
+    totalWords: number;
+    correctCount: number;
+    practiceMode: SpeakingPracticeMode;
+  };
+  createdAt: string;
+}
+
+export interface SpeakingBestScoreDto {
+  practiceMode: SpeakingPracticeMode;
+  bestScore: number;
+  totalAttempts: number;
+  averageScore: number;
 }
 
 export interface ImportCandidateWord {

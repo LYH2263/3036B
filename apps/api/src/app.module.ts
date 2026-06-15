@@ -10,6 +10,7 @@ import { ImportModule } from './import/import.module';
 import { MatchGameModule } from './match-game/match-game.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RootsModule } from './roots/roots.module';
+import { SpeakingModule } from './speaking/speaking.module';
 import { StatsModule } from './stats/stats.module';
 import { UserWordsModule } from './user-words/user-words.module';
 import { WordsModule } from './words/words.module';
@@ -34,6 +35,7 @@ import { WordsModule } from './words/words.module';
     MatchGameModule,
     ImportModule,
     RootsModule,
+    SpeakingModule,
     StatsModule
   ],
   providers: [

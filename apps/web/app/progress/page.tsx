@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { CalendarDays, Ear, FileText, Flame, Percent, RefreshCw, BookOpen, Trophy } from 'lucide-react';
+import { CalendarDays, Ear, FileText, Flame, Mic, Percent, RefreshCw, BookOpen, Trophy } from 'lucide-react';
 
 import { AppShell } from '../../components/app-shell';
 import { apiRequest } from '../../lib/api';
@@ -17,6 +17,8 @@ interface StatsOverview {
   grammarCorrectRate: number;
   dictationAttempts: number;
   dictationAccuracy: number;
+  speakingAttempts: number;
+  speakingAverageScore: number;
   streakDays: number;
   achievements: Array<{ code: string; title: string; description: string }>;
 }
@@ -85,6 +87,20 @@ export default function ProgressPage() {
                   听写准确率
                 </p>
                 <p className="stat-value">{formatPercent(stats.dictationAccuracy)}</p>
+              </div>
+              <div className="card card-hover bg-white/95" data-testid="progress-card-speaking-attempts">
+                <p className="stat-label">
+                  <Mic className="h-4 w-4 text-brand-500" aria-hidden="true" />
+                  口语练习次数
+                </p>
+                <p className="stat-value">{stats.speakingAttempts}</p>
+              </div>
+              <div className="card card-hover bg-white/95" data-testid="progress-card-speaking-score">
+                <p className="stat-label">
+                  <Mic className="h-4 w-4 text-brand-500" aria-hidden="true" />
+                  口语平均得分
+                </p>
+                <p className="stat-value">{formatPercent(stats.speakingAverageScore)}</p>
               </div>
               <div className="card card-hover bg-white/95" data-testid="progress-card-streak">
                 <p className="stat-label">

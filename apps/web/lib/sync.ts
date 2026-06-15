@@ -39,6 +39,23 @@ export async function syncOfflineQueue(): Promise<{ synced: number; failed: numb
         });
       }
 
+      if (row.event.type === 'SPEAKING_ATTEMPT') {
+        await apiRequest('/speaking/attempts', {
+          method: 'POST',
+          body: JSON.stringify({
+            wordEntryId: row.event.payload.wordEntryId,
+            targetText: row.event.payload.targetText,
+            recognizedText: row.event.payload.recognizedText,
+            similarityScore: row.event.payload.similarityScore,
+            wordResults: row.event.payload.wordResults,
+            totalWords: row.event.payload.totalWords,
+            correctCount: row.event.payload.correctCount,
+            practiceMode: row.event.payload.practiceMode,
+            clientEventId: row.event.clientEventId
+          })
+        });
+      }
+
       await removeOfflineEvent(row.id);
       synced += 1;
     } catch (_error) {
