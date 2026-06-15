@@ -189,3 +189,23 @@ export interface BatchAddResultDto {
     status: 'added' | 'already_exists' | 'not_found';
   }>;
 }
+
+export type RootType = 'root' | 'prefix' | 'suffix';
+
+export interface WordRootDto {
+  id: string;
+  root: string;
+  type: RootType;
+  meaning: string;
+  origin: string;
+  exampleWords: string;
+  derivedWordsCount: number;
+}
+
+export interface DerivedWordDto extends WordEntryDto {
+  position: string;
+}
+
+export interface WordRootDetailDto extends WordRootDto {
+  derivedWords: DerivedWordDto[];
+}

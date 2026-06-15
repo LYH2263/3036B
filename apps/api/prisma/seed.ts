@@ -662,12 +662,446 @@ async function main() {
     }
   });
 
+  const savedWordEntries: Map<string, string> = new Map();
   for (const [word, definition, exampleSentence, phonetic] of words) {
-    await prisma.wordEntry.upsert({
+    const saved = await prisma.wordEntry.upsert({
       where: { word },
       create: { word, definition, exampleSentence, phonetic },
       update: { definition, exampleSentence, phonetic }
     });
+    savedWordEntries.set(word.toLowerCase(), saved.id);
+  }
+
+  const rootsData = [
+    {
+      root: 'ject',
+      type: 'root' as const,
+      meaning: '投，掷，抛',
+      origin: '拉丁语 jacere',
+      exampleWords: 'project, reject, inject',
+      words: ['project', 'reject', 'inject', 'subject', 'object']
+    },
+    {
+      root: 'dict',
+      type: 'root' as const,
+      meaning: '说，言',
+      origin: '拉丁语 dicere',
+      exampleWords: 'predict, dictionary, dictate',
+      words: ['predict', 'dictionary', 'dictate', 'verdict', 'contradict']
+    },
+    {
+      root: 'struct',
+      type: 'root' as const,
+      meaning: '建造，建立',
+      origin: '拉丁语 struere',
+      exampleWords: 'structure, construct, instruct',
+      words: ['structure', 'construct', 'instruct', 'destruct', 'obstruct']
+    },
+    {
+      root: 'port',
+      type: 'root' as const,
+      meaning: '携带，运送',
+      origin: '拉丁语 portare',
+      exampleWords: 'transport, import, export',
+      words: ['transport', 'import', 'export', 'support', 'report']
+    },
+    {
+      root: 'vis/vid',
+      type: 'root' as const,
+      meaning: '看，观察',
+      origin: '拉丁语 videre',
+      exampleWords: 'vision, visible, video',
+      words: ['vision', 'visible', 'video', 'visualize', 'provide', 'evidence']
+    },
+    {
+      root: 'form',
+      type: 'root' as const,
+      meaning: '形状，形式',
+      origin: '拉丁语 forma',
+      exampleWords: 'inform, reform, transform',
+      words: ['inform', 'reform', 'transform', 'conform', 'perform', 'format']
+    },
+    {
+      root: 'duct',
+      type: 'root' as const,
+      meaning: '引导，带领',
+      origin: '拉丁语 ducere',
+      exampleWords: 'conduct, produce, reduce',
+      words: ['conduct', 'produce', 'reduce', 'introduce', 'educate', 'deduce']
+    },
+    {
+      root: 'scrib/script',
+      type: 'root' as const,
+      meaning: '写',
+      origin: '拉丁语 scribere',
+      exampleWords: 'describe, subscribe, script',
+      words: ['describe', 'subscribe', 'script', 'prescribe', 'manuscript']
+    },
+    {
+      root: 'spec/spect',
+      type: 'root' as const,
+      meaning: '看',
+      origin: '拉丁语 specere',
+      exampleWords: 'inspect, respect, expect',
+      words: ['inspect', 'respect', 'expect', 'aspect', 'suspect', 'spectacle']
+    },
+    {
+      root: 'fer',
+      type: 'root' as const,
+      meaning: '携带，带来',
+      origin: '拉丁语 ferre',
+      exampleWords: 'transfer, refer, prefer',
+      words: ['transfer', 'refer', 'prefer', 'offer', 'differ', 'suffer']
+    },
+    {
+      root: 'mit/miss',
+      type: 'root' as const,
+      meaning: '发送，派遣',
+      origin: '拉丁语 mittere',
+      exampleWords: 'transmit, submit, mission',
+      words: ['transmit', 'submit', 'mission', 'permit', 'admit', 'commit']
+    },
+    {
+      root: 'tract',
+      type: 'root' as const,
+      meaning: '拉，拖',
+      origin: '拉丁语 trahere',
+      exampleWords: 'attract, extract, contract',
+      words: ['attract', 'extract', 'contract', 'abstract', 'distract', 'subtract']
+    },
+    {
+      root: 'graph/gram',
+      type: 'root' as const,
+      meaning: '写，画，记录',
+      origin: '希腊语 graphein',
+      exampleWords: 'photograph, diagram, program',
+      words: ['photograph', 'diagram', 'program', 'grammar', 'telegram']
+    },
+    {
+      root: 'log/logy',
+      type: 'root' as const,
+      meaning: '言语，学科',
+      origin: '希腊语 logos',
+      exampleWords: 'biology, psychology, dialog',
+      words: ['biology', 'psychology', 'dialog', 'logic', 'apology', 'technology']
+    },
+    {
+      root: 'phon',
+      type: 'root' as const,
+      meaning: '声音',
+      origin: '希腊语 phone',
+      exampleWords: 'telephone, microphone, symphony',
+      words: ['telephone', 'microphone', 'symphony', 'phonetic', 'pronounce']
+    },
+    {
+      root: 'mem',
+      type: 'root' as const,
+      meaning: '记忆',
+      origin: '拉丁语 memor',
+      exampleWords: 'memory, remember, memorial',
+      words: ['memory', 'remember', 'memorial', 'memorize', 'commemorate']
+    },
+    {
+      root: 'cap/cep/ceiv',
+      type: 'root' as const,
+      meaning: '拿，取',
+      origin: '拉丁语 capere',
+      exampleWords: 'capture, receive, accept',
+      words: ['capture', 'receive', 'accept', 'concept', 'except', 'perceive']
+    },
+    {
+      root: 'pend/pens',
+      type: 'root' as const,
+      meaning: '悬挂，支付',
+      origin: '拉丁语 pendere',
+      exampleWords: 'depend, expense, suspend',
+      words: ['depend', 'expense', 'suspend', 'pension', 'independent']
+    },
+    {
+      root: 'vert/vers',
+      type: 'root' as const,
+      meaning: '转',
+      origin: '拉丁语 vertere',
+      exampleWords: 'convert, reverse, universe',
+      words: ['convert', 'reverse', 'universe', 'diverse', 'version', 'advertise']
+    },
+    {
+      root: 'act',
+      type: 'root' as const,
+      meaning: '做，行动',
+      origin: '拉丁语 agere',
+      exampleWords: 'action, active, react',
+      words: ['action', 'active', 'react', 'interact', 'exact', 'transaction']
+    },
+    {
+      root: 'fin',
+      type: 'root' as const,
+      meaning: '结束，边界',
+      origin: '拉丁语 finis',
+      exampleWords: 'final, finish, define',
+      words: ['final', 'finish', 'define', 'infinite', 'refine', 'confine']
+    },
+    {
+      root: 'mov/mot/mob',
+      type: 'root' as const,
+      meaning: '移动',
+      origin: '拉丁语 movere',
+      exampleWords: 'move, motion, mobile',
+      words: ['move', 'motion', 'mobile', 'remote', 'promote', 'emotion']
+    },
+    {
+      root: 'un-',
+      type: 'prefix' as const,
+      meaning: '不，相反',
+      origin: '古英语',
+      exampleWords: 'unhappy, unknown, unable',
+      words: ['unhappy', 'unknown', 'unable', 'unfair', 'unlock', 'unusual']
+    },
+    {
+      root: 're-',
+      type: 'prefix' as const,
+      meaning: '再，重新，回',
+      origin: '拉丁语',
+      exampleWords: 'return, review, rebuild',
+      words: ['return', 'review', 'rebuild', 'repeat', 'replace', 'report']
+    },
+    {
+      root: 'pre-',
+      type: 'prefix' as const,
+      meaning: '前，预先',
+      origin: '拉丁语 prae',
+      exampleWords: 'predict, prevent, prepare',
+      words: ['predict', 'prevent', 'prepare', 'preview', 'prefix', 'prescribe']
+    },
+    {
+      root: 'dis-',
+      type: 'prefix' as const,
+      meaning: '不，分开，相反',
+      origin: '拉丁语',
+      exampleWords: 'disagree, disappear, discover',
+      words: ['disagree', 'disappear', 'discover', 'discount', 'dislike', 'disorder']
+    },
+    {
+      root: 'in-/im-/il-/ir-',
+      type: 'prefix' as const,
+      meaning: '不，向内',
+      origin: '拉丁语',
+      exampleWords: 'impossible, illegal, irregular',
+      words: ['impossible', 'illegal', 'irregular', 'inactive', 'invisible', 'import']
+    },
+    {
+      root: 'ex-/e-',
+      type: 'prefix' as const,
+      meaning: '出，外，前任',
+      origin: '拉丁语',
+      exampleWords: 'export, exit, exclude',
+      words: ['export', 'exit', 'exclude', 'expand', 'extract', 'evade']
+    },
+    {
+      root: 'con-/com-/co-',
+      type: 'prefix' as const,
+      meaning: '共同，一起',
+      origin: '拉丁语 cum',
+      exampleWords: 'combine, connect, cooperate',
+      words: ['combine', 'connect', 'cooperate', 'communicate', 'complete', 'context']
+    },
+    {
+      root: 'trans-',
+      type: 'prefix' as const,
+      meaning: '跨越，转变',
+      origin: '拉丁语',
+      exampleWords: 'transport, transfer, transform',
+      words: ['transport', 'transfer', 'transform', 'translate', 'transmit', 'transparent']
+    },
+    {
+      root: 'sub-',
+      type: 'prefix' as const,
+      meaning: '在下面，次级',
+      origin: '拉丁语',
+      exampleWords: 'subway, submarine, subject',
+      words: ['subway', 'submarine', 'subject', 'submit', 'subscribe', 'subtract']
+    },
+    {
+      root: 'super-',
+      type: 'prefix' as const,
+      meaning: '超级，在上面',
+      origin: '拉丁语',
+      exampleWords: 'superman, supermarket, superior',
+      words: ['superman', 'supermarket', 'superior', 'supervise', 'supernatural']
+    },
+    {
+      root: 'inter-',
+      type: 'prefix' as const,
+      meaning: '在...之间，相互',
+      origin: '拉丁语',
+      exampleWords: 'international, internet, interact',
+      words: ['international', 'internet', 'interact', 'interview', 'interrupt']
+    },
+    {
+      root: 'auto-',
+      type: 'prefix' as const,
+      meaning: '自己，自动',
+      origin: '希腊语 autos',
+      exampleWords: 'automatic, automobile, autobiography',
+      words: ['automatic', 'automobile', 'autobiography', 'autonomy', 'autograph']
+    },
+    {
+      root: '-tion/-sion',
+      type: 'suffix' as const,
+      meaning: '名词后缀，表示行为/状态',
+      origin: '拉丁语',
+      exampleWords: 'action, education, decision',
+      words: ['action', 'education', 'decision', 'attention', 'information', 'vision']
+    },
+    {
+      root: '-ment',
+      type: 'suffix' as const,
+      meaning: '名词后缀，表示行为/结果',
+      origin: '拉丁语 -mentum',
+      exampleWords: 'movement, development, government',
+      words: ['movement', 'development', 'government', 'treatment', 'statement']
+    },
+    {
+      root: '-able/-ible',
+      type: 'suffix' as const,
+      meaning: '形容词后缀，表示可...的',
+      origin: '拉丁语 -abilis',
+      exampleWords: 'readable, possible, visible',
+      words: ['readable', 'possible', 'visible', 'comfortable', 'suitable', 'flexible']
+    },
+    {
+      root: '-ful',
+      type: 'suffix' as const,
+      meaning: '形容词后缀，表示充满...的',
+      origin: '古英语 -full',
+      exampleWords: 'beautiful, helpful, careful',
+      words: ['beautiful', 'helpful', 'careful', 'powerful', 'wonderful', 'grateful']
+    },
+    {
+      root: '-less',
+      type: 'suffix' as const,
+      meaning: '形容词后缀，表示没有...的',
+      origin: '古英语 -leas',
+      exampleWords: 'hopeless, careless, useless',
+      words: ['hopeless', 'careless', 'useless', 'endless', 'homeless', 'regardless']
+    },
+    {
+      root: '-ly',
+      type: 'suffix' as const,
+      meaning: '副词后缀，表示...地',
+      origin: '古英语 -lice',
+      exampleWords: 'quickly, carefully, happily',
+      words: ['quickly', 'carefully', 'happily', 'slowly', 'finally', 'usually']
+    },
+    {
+      root: '-er/-or',
+      type: 'suffix' as const,
+      meaning: '名词后缀，表示做...的人/物',
+      origin: '古英语/拉丁语',
+      exampleWords: 'teacher, actor, computer',
+      words: ['teacher', 'actor', 'computer', 'writer', 'visitor', 'inventor']
+    },
+    {
+      root: '-ist',
+      type: 'suffix' as const,
+      meaning: '名词后缀，表示...主义者/专家',
+      origin: '希腊语 -istes',
+      exampleWords: 'scientist, artist, specialist',
+      words: ['scientist', 'artist', 'specialist', 'tourist', 'novelist', 'economist']
+    },
+    {
+      root: '-ize/-ise',
+      type: 'suffix' as const,
+      meaning: '动词后缀，表示使...化',
+      origin: '希腊语 -izein',
+      exampleWords: 'realize, organize, modernize',
+      words: ['realize', 'organize', 'modernize', 'visualize', 'emphasize', 'criticize']
+    },
+    {
+      root: '-ness',
+      type: 'suffix' as const,
+      meaning: '名词后缀，表示...性质/状态',
+      origin: '古英语 -nes',
+      exampleWords: 'happiness, kindness, darkness',
+      words: ['happiness', 'kindness', 'darkness', 'weakness', 'awareness', 'illness']
+    },
+    {
+      root: '-ity/-ty',
+      type: 'suffix' as const,
+      meaning: '名词后缀，表示...性质/状态',
+      origin: '拉丁语 -itas',
+      exampleWords: 'ability, reality, quality',
+      words: ['ability', 'reality', 'quality', 'activity', 'possibility', 'university']
+    },
+    {
+      root: '-al',
+      type: 'suffix' as const,
+      meaning: '形容词后缀，表示...的',
+      origin: '拉丁语 -alis',
+      exampleWords: 'national, natural, personal',
+      words: ['national', 'natural', 'personal', 'traditional', 'cultural', 'musical']
+    },
+    {
+      root: '-ous/-ious',
+      type: 'suffix' as const,
+      meaning: '形容词后缀，表示充满...的',
+      origin: '拉丁语 -osus',
+      exampleWords: 'famous, dangerous, curious',
+      words: ['famous', 'dangerous', 'curious', 'nervous', 'various', 'delicious']
+    }
+  ];
+
+  for (const rootData of rootsData) {
+    const savedRoot = await prisma.wordRoot.upsert({
+      where: {
+        root_type: {
+          root: rootData.root,
+          type: rootData.type
+        }
+      },
+      create: {
+        root: rootData.root,
+        type: rootData.type,
+        meaning: rootData.meaning,
+        origin: rootData.origin,
+        exampleWords: rootData.exampleWords
+      },
+      update: {
+        meaning: rootData.meaning,
+        origin: rootData.origin,
+        exampleWords: rootData.exampleWords
+      }
+    });
+
+    for (const word of rootData.words) {
+      const wordId = savedWordEntries.get(word.toLowerCase());
+      if (wordId) {
+        const position = word.toLowerCase().includes(rootData.root.replace(/[-/]/g, ''))
+          ? rootData.type === 'prefix'
+            ? 'prefix'
+            : rootData.type === 'suffix'
+            ? 'suffix'
+            : 'root'
+          : 'root';
+
+        await prisma.wordRootRelation.upsert({
+          where: {
+            rootId_wordEntryId: {
+              rootId: savedRoot.id,
+              wordEntryId: wordId
+            }
+          },
+          create: {
+            rootId: savedRoot.id,
+            wordEntryId: wordId,
+            position
+          },
+          update: {
+            position
+          }
+        });
+      }
+    }
   }
 
   for (const lesson of lessons) {
@@ -702,8 +1136,10 @@ async function main() {
     }
   }
 
+  const rootCount = await prisma.wordRoot.count();
+  const relationCount = await prisma.wordRootRelation.count();
   console.log(
-    `Seed complete: test account ${TEST_ACCOUNT_EMAIL} / ${TEST_ACCOUNT_PASSWORD}, ${words.length} words, ${lessons.length} lessons`
+    `Seed complete: test account ${TEST_ACCOUNT_EMAIL} / ${TEST_ACCOUNT_PASSWORD}, ${words.length} words, ${lessons.length} lessons, ${rootCount} roots, ${relationCount} root-word relations`
   );
 }
 

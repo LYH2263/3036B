@@ -11,6 +11,7 @@ import {
   Import,
   LayoutDashboard,
   LogOut,
+  Puzzle,
   Sparkles
 } from 'lucide-react';
 import { PropsWithChildren } from 'react';
@@ -20,6 +21,7 @@ import { useAuthStore } from '../store/auth-store';
 const navItems = [
   { href: '/dashboard', label: '面板', icon: LayoutDashboard },
   { href: '/vocabulary', label: '词汇', icon: BookOpen },
+  { href: '/roots', label: '词根', icon: Puzzle },
   { href: '/import', label: '导入', icon: Import },
   { href: '/dictation', label: '听写', icon: Ear },
   { href: '/grammar', label: '语法', icon: FileText },

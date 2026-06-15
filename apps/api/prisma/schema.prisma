@@ -23,6 +23,12 @@ enum QuestionType {
   fill_blank
 }
 
+enum RootType {
+  root
+  prefix
+  suffix
+}
+
 model User {
   id                 String               @id @default(uuid())
   email              String               @unique
@@ -174,4 +180,35 @@ model MatchGameAttempt {
   @@unique([userId, clientEventId])
   @@index([userId, createdAt])
   @@map("match_game_attempts")
+}
+
+model WordRoot {
+  id          String              @id @default(uuid())
+  root        String
+  type        RootType
+  meaning     String
+  origin      String              @default("")
+  exampleWords String             @default("")
+  createdAt   DateTime            @default(now()) @map("created_at")
+  relations   WordRootRelation[]
+
+  @@unique([root, type])
+  @@index([type])
+  @@map("word_roots")
+}
+
+model WordRootRelation {
+  id          String     @id @default(uuid())
+  rootId      String     @map("root_id")
+  wordEntryId String     @map("word_entry_id")
+  position    String     @default("")
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  root        WordRoot   @relation(fields: [rootId], references: [id], onDelete: Cascade)
+  wordEntry   WordEntry  @relation(fields: [wordEntryId], references: [id], onDelete: Cascade)
+
+  @@unique([rootId, wordEntryId])
+  @@index([rootId])
+  @@index([wordEntryId])
+  @@map("word_root_relations")
 }

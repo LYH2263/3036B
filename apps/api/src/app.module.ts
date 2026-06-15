@@ -9,6 +9,7 @@ import { GrammarModule } from './grammar/grammar.module';
 import { ImportModule } from './import/import.module';
 import { MatchGameModule } from './match-game/match-game.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { RootsModule } from './roots/roots.module';
 import { StatsModule } from './stats/stats.module';
 import { UserWordsModule } from './user-words/user-words.module';
 import { WordsModule } from './words/words.module';
@@ -32,6 +33,7 @@ import { WordsModule } from './words/words.module';
     DictationModule,
     MatchGameModule,
     ImportModule,
+    RootsModule,
     StatsModule
   ],
   providers: [
