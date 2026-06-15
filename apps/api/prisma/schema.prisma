@@ -41,6 +41,7 @@ model User {
   matchGameAttempts  MatchGameAttempt[]
   speakingAttempts   SpeakingAttempt[]
   clozeAttempts      ClozeAttempt[]
+  focusSessions      FocusSession[]
 
   @@map("users")
 }
@@ -259,4 +260,30 @@ model WordRootRelation {
   @@index([rootId])
   @@index([wordEntryId])
   @@map("word_root_relations")
+}
+
+enum FocusPhase {
+  focus
+  short_break
+  long_break
+}
+
+model FocusSession {
+  id             String     @id @default(uuid())
+  userId         String     @map("user_id")
+  clientEventId  String     @map("client_event_id")
+  phase          FocusPhase
+  durationSec    Int        @map("duration_sec")
+  startedAt      DateTime   @map("started_at")
+  endedAt        DateTime   @map("ended_at")
+  completed      Boolean    @default(false)
+  interrupted    Boolean    @default(false)
+  actualDurationSec Int     @map("actual_duration_sec")
+  createdAt      DateTime   @default(now()) @map("created_at")
+
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientEventId])
+  @@index([userId, startedAt])
+  @@map("focus_sessions")
 }

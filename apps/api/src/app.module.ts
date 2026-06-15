@@ -5,6 +5,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { AuthModule } from './auth/auth.module';
 import { DictationModule } from './dictation/dictation.module';
+import { FocusModule } from './focus/focus.module';
 import { GrammarModule } from './grammar/grammar.module';
 import { ImportModule } from './import/import.module';
 import { MatchGameModule } from './match-game/match-game.module';
@@ -38,6 +39,7 @@ import { WordsModule } from './words/words.module';
     RootsModule,
     SpeakingModule,
     ClozeModule,
+    FocusModule,
     StatsModule
   ],
   providers: [

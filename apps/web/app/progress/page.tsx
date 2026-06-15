@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { CalendarDays, Ear, FileText, Flame, Mic, Percent, RefreshCw, BookOpen, Trophy } from 'lucide-react';
+import { CalendarDays, Clock3, Ear, FileText, Flame, Mic, Percent, RefreshCw, BookOpen, Trophy, Target } from 'lucide-react';
 
 import { AppShell } from '../../components/app-shell';
 import { apiRequest } from '../../lib/api';
@@ -19,6 +19,10 @@ interface StatsOverview {
   dictationAccuracy: number;
   speakingAttempts: number;
   speakingAverageScore: number;
+  clozeAttempts: number;
+  clozeAccuracy: number;
+  focusCompletedToday: number;
+  focusDurationTodaySec: number;
   streakDays: number;
   achievements: Array<{ code: string; title: string; description: string }>;
 }
@@ -101,6 +105,30 @@ export default function ProgressPage() {
                   口语平均得分
                 </p>
                 <p className="stat-value">{formatPercent(stats.speakingAverageScore)}</p>
+              </div>
+              <div className="card card-hover bg-white/95" data-testid="progress-card-cloze-attempts">
+                <p className="stat-label">
+                  <FileText className="h-4 w-4 text-brand-500" aria-hidden="true" />
+                  填空练习次数
+                </p>
+                <p className="stat-value">{stats.clozeAttempts}</p>
+              </div>
+              <div className="card card-hover bg-white/95" data-testid="progress-card-cloze-accuracy">
+                <p className="stat-label">
+                  <FileText className="h-4 w-4 text-brand-500" aria-hidden="true" />
+                  填空准确率
+                </p>
+                <p className="stat-value">{formatPercent(stats.clozeAccuracy)}</p>
+              </div>
+              <div className="card card-hover bg-white/95" data-testid="progress-card-focus-today">
+                <p className="stat-label">
+                  <Target className="h-4 w-4 text-brand-500" aria-hidden="true" />
+                  今日专注次数
+                </p>
+                <p className="stat-value">{stats.focusCompletedToday} 次</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  {Math.floor(stats.focusDurationTodaySec / 60)} 分钟
+                </p>
               </div>
               <div className="card card-hover bg-white/95" data-testid="progress-card-streak">
                 <p className="stat-label">

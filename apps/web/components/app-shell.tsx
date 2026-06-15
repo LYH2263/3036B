@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   BarChart3,
   BookOpen,
+  Clock3,
   Ear,
   FileText,
   Gamepad2,
@@ -30,6 +31,7 @@ const navItems = [
   { href: '/cloze', label: '填空', icon: PenLine },
   { href: '/grammar', label: '语法', icon: FileText },
   { href: '/games/match', label: '配对', icon: Gamepad2 },
+  { href: '/focus', label: '专注', icon: Clock3 },
   { href: '/progress', label: '进度', icon: BarChart3 }
 ];
 

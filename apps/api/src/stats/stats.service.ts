@@ -12,7 +12,7 @@ export class StatsService {
     todayStart.setHours(0, 0, 0, 0);
     const tomorrowStart = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
 
-    const [todayReviewCount, todayNewWords, vocabularyTotal, totalReviews, grammarStats, dictationStats, speakingStats, clozeStats] =
+    const [todayReviewCount, todayNewWords, vocabularyTotal, totalReviews, grammarStats, dictationStats, speakingStats, clozeStats, focusStats] =
       await Promise.all([
         this.prisma.userWordReviewEvent.count({
           where: {
@@ -89,6 +89,16 @@ export class StatsService {
             totalQuestions: true,
             correctCount: true
           }
+        }),
+        this.prisma.focusSession.findMany({
+          where: {
+            userId,
+            phase: 'focus',
+            startedAt: {
+              gte: todayStart,
+              lt: tomorrowStart
+            }
+          }
         })
       ]);
 
@@ -117,7 +127,12 @@ export class StatsService {
         ? Number(((clozeCorrectCount / clozeTotalQuestions) * 100).toFixed(2))
         : 0;
 
-    const streakDays = await this.computeStreakDays(userId, todayStart);
+    const focusCompletedToday = focusStats.filter((s) => s.completed).length;
+    const focusDurationTodaySec = focusStats
+      .filter((s) => s.completed)
+      .reduce((sum, s) => sum + s.actualDurationSec, 0);
+
+    const streakDays = await this.computeStreakDays(userId, todayStart, focusStats);
 
     const achievements = [
       {
@@ -149,6 +164,18 @@ export class StatsService {
         title: '填空练习 10 次',
         description: '累计完成 10 次例句填空练习',
         unlocked: clozeAttempts >= 10
+      },
+      {
+        code: 'FOCUS_FIRST',
+        title: '首次专注',
+        description: '完成第一个番茄钟专注周期',
+        unlocked: focusCompletedToday >= 1
+      },
+      {
+        code: 'FOCUS_TODAY_3',
+        title: '今日专注达人',
+        description: '今日完成 3 个番茄钟专注周期',
+        unlocked: focusCompletedToday >= 3
       }
     ]
       .filter((item) => item.unlocked)
@@ -167,50 +194,63 @@ export class StatsService {
       speakingAverageScore,
       clozeAttempts,
       clozeAccuracy,
+      focusCompletedToday,
+      focusDurationTodaySec,
       streakDays,
       achievements
     };
   }
 
-  private async computeStreakDays(userId: string, todayStart: Date): Promise<number> {
-    const [reviewEvents, attempts, addedWords, dictationAttempts, speakingAttempts, clozeAttempts] = await Promise.all([
-      this.prisma.userWordReviewEvent.findMany({
-        where: { userId },
-        select: { reviewedAt: true },
-        orderBy: { reviewedAt: 'desc' },
-        take: 90
-      }),
-      this.prisma.grammarAttempt.findMany({
-        where: { userId },
-        select: { createdAt: true },
-        orderBy: { createdAt: 'desc' },
-        take: 90
-      }),
-      this.prisma.userWordProgress.findMany({
-        where: { userId },
-        select: { createdAt: true },
-        orderBy: { createdAt: 'desc' },
-        take: 90
-      }),
-      this.prisma.dictationAttempt.findMany({
-        where: { userId },
-        select: { createdAt: true },
-        orderBy: { createdAt: 'desc' },
-        take: 90
-      }),
-      this.prisma.speakingAttempt.findMany({
-        where: { userId },
-        select: { createdAt: true },
-        orderBy: { createdAt: 'desc' },
-        take: 90
-      }),
-      this.prisma.clozeAttempt.findMany({
-        where: { userId },
-        select: { createdAt: true },
-        orderBy: { createdAt: 'desc' },
-        take: 90
-      })
-    ]);
+  private async computeStreakDays(
+    userId: string,
+    todayStart: Date,
+    _todayFocusSessions: Array<{ startedAt: Date }> = []
+  ): Promise<number> {
+    const [reviewEvents, attempts, addedWords, dictationAttempts, speakingAttempts, clozeAttempts, focusSessions] =
+      await Promise.all([
+        this.prisma.userWordReviewEvent.findMany({
+          where: { userId },
+          select: { reviewedAt: true },
+          orderBy: { reviewedAt: 'desc' },
+          take: 90
+        }),
+        this.prisma.grammarAttempt.findMany({
+          where: { userId },
+          select: { createdAt: true },
+          orderBy: { createdAt: 'desc' },
+          take: 90
+        }),
+        this.prisma.userWordProgress.findMany({
+          where: { userId },
+          select: { createdAt: true },
+          orderBy: { createdAt: 'desc' },
+          take: 90
+        }),
+        this.prisma.dictationAttempt.findMany({
+          where: { userId },
+          select: { createdAt: true },
+          orderBy: { createdAt: 'desc' },
+          take: 90
+        }),
+        this.prisma.speakingAttempt.findMany({
+          where: { userId },
+          select: { createdAt: true },
+          orderBy: { createdAt: 'desc' },
+          take: 90
+        }),
+        this.prisma.clozeAttempt.findMany({
+          where: { userId },
+          select: { createdAt: true },
+          orderBy: { createdAt: 'desc' },
+          take: 90
+        }),
+        this.prisma.focusSession.findMany({
+          where: { userId, phase: 'focus', completed: true },
+          select: { startedAt: true },
+          orderBy: { startedAt: 'desc' },
+          take: 90
+        })
+      ]);
 
     const daySet = new Set<string>();
     const toDayKey = (date: Date) => {
@@ -225,6 +265,7 @@ export class StatsService {
     dictationAttempts.forEach((item) => daySet.add(toDayKey(item.createdAt)));
     speakingAttempts.forEach((item) => daySet.add(toDayKey(item.createdAt)));
     clozeAttempts.forEach((item) => daySet.add(toDayKey(item.createdAt)));
+    focusSessions.forEach((item) => daySet.add(toDayKey(item.startedAt)));
 
     let streak = 0;
     let cursor = new Date(todayStart);
