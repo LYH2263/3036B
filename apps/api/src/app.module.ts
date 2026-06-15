@@ -6,6 +6,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { DictationModule } from './dictation/dictation.module';
 import { GrammarModule } from './grammar/grammar.module';
+import { MatchGameModule } from './match-game/match-game.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { StatsModule } from './stats/stats.module';
 import { UserWordsModule } from './user-words/user-words.module';
@@ -28,6 +29,7 @@ import { WordsModule } from './words/words.module';
     UserWordsModule,
     GrammarModule,
     DictationModule,
+    MatchGameModule,
     StatsModule
   ],
   providers: [

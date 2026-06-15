@@ -7,6 +7,7 @@ import {
   BookOpen,
   Ear,
   FileText,
+  Gamepad2,
   LayoutDashboard,
   LogOut,
   Sparkles
@@ -20,6 +21,7 @@ const navItems = [
   { href: '/vocabulary', label: '词汇', icon: BookOpen },
   { href: '/dictation', label: '听写', icon: Ear },
   { href: '/grammar', label: '语法', icon: FileText },
+  { href: '/games/match', label: '配对', icon: Gamepad2 },
   { href: '/progress', label: '进度', icon: BarChart3 }
 ];
 

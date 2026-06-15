@@ -136,3 +136,29 @@ export interface DictationAttemptEvent {
   };
   createdAt: string;
 }
+
+export interface MatchGameWordDto {
+  id: string;
+  word: string;
+  definition: string;
+}
+
+export interface MatchGameAttemptResultDto {
+  deduplicated: boolean;
+  id: string;
+  score: number;
+  maxCombo: number;
+  matchedCount: number;
+  totalWords: number;
+  timeUsedSec: number;
+  won: boolean;
+  createdAt: string;
+}
+
+export interface MatchGameBestScoreDto {
+  difficulty: string;
+  bestScore: number;
+  bestCombo: number;
+  totalGames: number;
+  totalWins: number;
+}

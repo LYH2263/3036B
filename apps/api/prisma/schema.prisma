@@ -32,6 +32,7 @@ model User {
   grammarAttempts    GrammarAttempt[]
   wordReviewEvents   UserWordReviewEvent[]
   dictationAttempts  DictationAttempt[]
+  matchGameAttempts  MatchGameAttempt[]
 
   @@map("users")
 }
@@ -151,4 +152,26 @@ model DictationAttempt {
   @@unique([userId, clientEventId])
   @@index([userId, createdAt])
   @@map("dictation_attempts")
+}
+
+model MatchGameAttempt {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  clientEventId  String   @map("client_event_id")
+  difficulty     String   @default("normal")
+  wordCount      Int      @map("word_count")
+  timeLimitSec   Int      @map("time_limit_sec")
+  score          Int
+  maxCombo       Int      @map("max_combo")
+  matchedCount   Int      @map("matched_count")
+  totalWords     Int      @map("total_words")
+  timeUsedSec    Float    @map("time_used_sec")
+  won           Boolean
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientEventId])
+  @@index([userId, createdAt])
+  @@map("match_game_attempts")
 }
