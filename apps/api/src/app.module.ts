@@ -15,6 +15,7 @@ import { RootsModule } from './roots/roots.module';
 import { SpeakingModule } from './speaking/speaking.module';
 import { ClozeModule } from './cloze/cloze.module';
 import { StatsModule } from './stats/stats.module';
+import { UserModule } from './user/user.module';
 import { UserWordsModule } from './user-words/user-words.module';
 import { WordsModule } from './words/words.module';
 
@@ -42,7 +43,8 @@ import { WordsModule } from './words/words.module';
     ClozeModule,
     FocusModule,
     StatsModule,
-    DailyWordModule
+    DailyWordModule,
+    UserModule
   ],
   providers: [
     {

@@ -331,3 +331,33 @@ export interface DailyWordHistoryDto {
   items: DailyWordDto[];
   total: number;
 }
+
+export interface UserProfileDto {
+  id: string;
+  email: string;
+  nickname: string | null;
+  avatarColor: string | null;
+  createdAt: string;
+}
+
+export interface UserPreferencesDto {
+  defaultAccent: string;
+  dailyGoal: number;
+  reviewReminderEnabled: boolean;
+}
+
+export interface UpdateProfileDto {
+  nickname?: string;
+  avatarColor?: string;
+}
+
+export interface UpdatePreferencesDto {
+  defaultAccent?: string;
+  dailyGoal?: number;
+  reviewReminderEnabled?: boolean;
+}
+
+export interface ChangePasswordDto {
+  oldPassword: string;
+  newPassword: string;
+}

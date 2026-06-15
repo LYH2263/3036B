@@ -30,19 +30,24 @@ enum RootType {
 }
 
 model User {
-  id                 String               @id @default(uuid())
-  email              String               @unique
-  passwordHash       String               @map("password_hash")
-  createdAt          DateTime             @default(now()) @map("created_at")
-  wordProgresses     UserWordProgress[]
-  grammarAttempts    GrammarAttempt[]
-  wordReviewEvents   UserWordReviewEvent[]
-  dictationAttempts  DictationAttempt[]
-  matchGameAttempts  MatchGameAttempt[]
-  speakingAttempts   SpeakingAttempt[]
-  clozeAttempts      ClozeAttempt[]
-  focusSessions      FocusSession[]
-  dailyWords         DailyWord[]
+  id                    String               @id @default(uuid())
+  email                 String               @unique
+  passwordHash          String               @map("password_hash")
+  nickname              String?
+  avatarColor           String?              @map("avatar_color")
+  defaultAccent         String               @default("en-US") @map("default_accent")
+  dailyGoal             Int                  @default(20) @map("daily_goal")
+  reviewReminderEnabled Boolean              @default(true) @map("review_reminder_enabled")
+  createdAt             DateTime             @default(now()) @map("created_at")
+  wordProgresses        UserWordProgress[]
+  grammarAttempts       GrammarAttempt[]
+  wordReviewEvents      UserWordReviewEvent[]
+  dictationAttempts     DictationAttempt[]
+  matchGameAttempts     MatchGameAttempt[]
+  speakingAttempts      SpeakingAttempt[]
+  clozeAttempts         ClozeAttempt[]
+  focusSessions         FocusSession[]
+  dailyWords            DailyWord[]
 
   @@map("users")
 }

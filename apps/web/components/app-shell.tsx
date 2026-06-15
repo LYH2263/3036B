@@ -16,6 +16,7 @@ import {
   Mic,
   PenLine,
   Puzzle,
+  Settings,
   Sparkles
 } from 'lucide-react';
 import { PropsWithChildren } from 'react';
@@ -34,7 +35,8 @@ const navItems = [
   { href: '/grammar', label: '语法', icon: FileText },
   { href: '/games/match', label: '配对', icon: Gamepad2 },
   { href: '/focus', label: '专注', icon: Clock3 },
-  { href: '/progress', label: '进度', icon: BarChart3 }
+  { href: '/progress', label: '进度', icon: BarChart3 },
+  { href: '/settings', label: '设置', icon: Settings }
 ];
 
 export function AppShell({ children, title }: PropsWithChildren<{ title: string }>) {
