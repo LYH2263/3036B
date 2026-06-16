@@ -361,3 +361,32 @@ export interface ChangePasswordDto {
   oldPassword: string;
   newPassword: string;
 }
+
+export type LeaderboardDimension =
+  | 'weekly_reviews'
+  | 'streak_days'
+  | 'grammar_accuracy'
+  | 'vocabulary_count';
+
+export type LeaderboardPeriod = 'week' | 'all';
+
+export interface LeaderboardEntryDto {
+  rank: number;
+  isTied: boolean;
+  userId: string;
+  displayName: string;
+  avatarColor: string | null;
+  value: number;
+  isCurrentUser: boolean;
+}
+
+export interface LeaderboardDto {
+  dimension: LeaderboardDimension;
+  period: LeaderboardPeriod;
+  total: number;
+  entries: LeaderboardEntryDto[];
+  currentUserEntry: LeaderboardEntryDto | null;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+}

@@ -18,6 +18,7 @@ import { StatsModule } from './stats/stats.module';
 import { UserModule } from './user/user.module';
 import { UserWordsModule } from './user-words/user-words.module';
 import { WordsModule } from './words/words.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -44,7 +45,8 @@ import { WordsModule } from './words/words.module';
     FocusModule,
     StatsModule,
     DailyWordModule,
-    UserModule
+    UserModule,
+    LeaderboardModule
   ],
   providers: [
     {

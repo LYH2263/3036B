@@ -17,7 +17,8 @@ import {
   PenLine,
   Puzzle,
   Settings,
-  Sparkles
+  Sparkles,
+  Trophy
 } from 'lucide-react';
 import { PropsWithChildren } from 'react';
 
@@ -36,6 +37,7 @@ const navItems = [
   { href: '/games/match', label: '配对', icon: Gamepad2 },
   { href: '/focus', label: '专注', icon: Clock3 },
   { href: '/progress', label: '进度', icon: BarChart3 },
+  { href: '/leaderboard', label: '排行', icon: Trophy },
   { href: '/settings', label: '设置', icon: Settings }
 ];
 
