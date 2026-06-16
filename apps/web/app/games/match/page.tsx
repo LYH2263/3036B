@@ -121,10 +121,6 @@ export default function MatchGamePage() {
   }) => void) | null>(null);
 
   useEffect(() => {
-    submitRef.current = submitMutation.mutate;
-  }, [submitMutation.mutate]);
-
-  useEffect(() => {
     scoreRef.current = score;
     maxComboRef.current = maxCombo;
     matchedRef.current = matchedIds;
@@ -197,6 +193,10 @@ export default function MatchGamePage() {
       void queryClient.invalidateQueries({ queryKey: ['match-game-best'] });
     }
   });
+
+  useEffect(() => {
+    submitRef.current = submitMutation.mutate;
+  }, [submitMutation.mutate]);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {

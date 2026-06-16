@@ -4,6 +4,8 @@
 
 :root {
   color-scheme: light;
+  --font-body: 'Noto Sans SC';
+  --font-heading: 'Noto Serif SC';
   --bg-base: #f4f7ff;
   --bg-soft: #edf2ff;
   --surface: #ffffff;

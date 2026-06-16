@@ -828,7 +828,7 @@ export default function FocusPage() {
   );
 }
 
-function BarChart3Icon({ className, 'aria-hidden': ariaHidden }: { className?: string; 'aria-hidden'?: boolean }) {
+function BarChart3Icon({ className, 'aria-hidden': ariaHidden }: { className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

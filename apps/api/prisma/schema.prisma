@@ -62,6 +62,9 @@ model WordEntry {
   createdAt       DateTime           @default(now()) @map("created_at")
   progresses      UserWordProgress[]
   dailyWords      DailyWord[]
+  speakingAttempts SpeakingAttempt[]
+  clozeAttempts   ClozeAttempt[]
+  rootRelations   WordRootRelation[]
 
   @@index([word])
   @@map("word_entries")

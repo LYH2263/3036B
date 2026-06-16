@@ -6,6 +6,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 type SeedWord = readonly [string, string, string, string, string];
+type CoreSeedWord = readonly [string, string, string, string];
 
 const TARGET_WORDS_COUNT = 9300;
 const WORD_LIST_FILE = 'google-10000-english-no-swears.txt';
@@ -77,7 +78,7 @@ const coreWords = [
   ['understand', '理解', 'I understand this rule now.', '/ˌʌndəˈstænd/'],
   ['update', '更新', 'Update your notes after class.', '/ˌʌpˈdeɪt/'],
   ['visualize', '可视化', 'Visualize your progress on charts.', '/ˈvɪʒuəlaɪz/']
-] as const satisfies readonly SeedWord[];
+] as const satisfies readonly CoreSeedWord[];
 
 function resolveDataFilePath(fileName: string): string {
   const cwdPath = path.join(process.cwd(), 'prisma', 'data', fileName);
